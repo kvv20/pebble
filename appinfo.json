@@ -1,0 +1,49 @@
+{
+    "appKeys": {},
+    "capabilities": [
+        "configurable"
+    ],
+    "companyName": "vlad.kazanovsky@gmail.com",
+    "longName": "MyWatchface",
+    "projectType": "native",
+    "resources": {
+        "media": [
+            {
+                "file": "images/moon.png",
+                "name": "MOON",
+                "type": "png"
+            },
+            {
+                "file": "images/sun.png",
+                "name": "SUN",
+                "type": "png"
+            },
+            {
+                "file": "images/Watchface_back.png",
+                "name": "IMAGE_BACK",
+                "type": "png"
+            },
+            {
+                "characterRegex": "[0-9.:\\-]",
+                "file": "fonts/youmurdererbb_reg.ttf",
+                "name": "FONT_MURDER_72",
+                "trackingAdjust": 1,
+                "type": "font"
+            },
+            {
+                "file": "images/Watchface_logo.png",
+                "menuIcon": true,
+                "name": "icon",
+                "type": "png"
+            }
+        ]
+    },
+    "sdkVersion": "2",
+    "shortName": "MyWatchface",
+    "uuid": "0bd97a95-d3d1-4052-b1be-e6549572f30a",
+    "versionCode": 1,
+    "versionLabel": "1.0",
+    "watchapp": {
+        "watchface": true
+    }
+}
