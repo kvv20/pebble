@@ -15,10 +15,16 @@ static void update_sky(){
   time_t temp = time(NULL); 
   tick_time = localtime(&temp);
   
+  char battery_buffer[16];
+  BatteryChargeState charge_state = battery_state_service_peek();
+  snprintf(battery_buffer, sizeof(battery_buffer), "%d%%", charge_state.charge_percent);
   // Create a long-lived buffer
-  static char date_buffer[] = "____________";
-  strftime(date_buffer, sizeof("Thu, Apr 01"), "%a, %b %d", tick_time);
+  static char date_buffer[] = "Thu, Apr 01      100% ";
+  strftime(date_buffer, sizeof("Thu, Apr 01      100%"), "%a, %b %d      ", tick_time);
+  strcat(date_buffer, battery_buffer);
   text_layer_set_text(s_date_layer, date_buffer);
+  
+  //
   
   int hour = tick_time->tm_hour;
   APP_LOG(APP_LOG_LEVEL_INFO, "Updating sky");
