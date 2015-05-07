@@ -15,6 +15,7 @@ static void update_sky(){
   time_t temp = time(NULL); 
   tick_time = localtime(&temp);
   
+  int x_shift = 0;
   char battery_buffer[16];
   BatteryChargeState charge_state = battery_state_service_peek();
   snprintf(battery_buffer, sizeof(battery_buffer), "%d%%", charge_state.charge_percent);
@@ -24,14 +25,28 @@ static void update_sky(){
   strcat(date_buffer, battery_buffer);
   text_layer_set_text(s_date_layer, date_buffer);
   
-  //
+
   
   int hour = tick_time->tm_hour;
   APP_LOG(APP_LOG_LEVEL_INFO, "Updating sky");
   if (hour > 6 && hour < 21){
+    //range from -80 to 80
+    x_shift = hour * 10 - 144;
+    layer_set_frame(bitmap_layer_get_layer(s_background_layer), GRect(x_shift, 0, 144, 58));
     bitmap_layer_set_bitmap(s_background_layer, s_background_bitmap_sun);
   }
   else{
+    if (hour < 12) {
+      //early morning
+      x_shift = hour * 16;
+      layer_set_frame(bitmap_layer_get_layer(s_background_layer), GRect(x_shift, 0, 144 - x_shift, 58));
+    }
+    else{
+      //late evening
+      x_shift = (hour-12) * 6;
+      layer_set_frame(bitmap_layer_get_layer(s_background_layer), GRect(x_shift, 0, 144 - x_shift, 58));
+      
+    }
     bitmap_layer_set_bitmap(s_background_layer, s_background_bitmap_moon);
   }
 }
