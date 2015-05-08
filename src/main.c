@@ -16,6 +16,7 @@ static void update_sky(){
   tick_time = localtime(&temp);
   
   int x_shift = 0;
+  int y_shift = 0;
   char battery_buffer[16];
   BatteryChargeState charge_state = battery_state_service_peek();
   snprintf(battery_buffer, sizeof(battery_buffer), "%d%%", charge_state.charge_percent);
@@ -45,7 +46,9 @@ static void update_sky(){
     x_shift = hour * 16 - 400;
     curBitmap = s_background_bitmap_moon;
   }
-  layer_set_frame(bitmap_layer_get_layer(s_background_layer), GRect(x_shift, 0, 144, 58));
+  y_shift = abs(x_shift) / 4;
+  
+  layer_set_frame(bitmap_layer_get_layer(s_background_layer), GRect(x_shift, y_shift, 144, 58));
   bitmap_layer_set_bitmap(s_background_layer, curBitmap);
 }
 
