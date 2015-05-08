@@ -20,35 +20,33 @@ static void update_sky(){
   BatteryChargeState charge_state = battery_state_service_peek();
   snprintf(battery_buffer, sizeof(battery_buffer), "%d%%", charge_state.charge_percent);
   // Create a long-lived buffer
-  static char date_buffer[] = "Thu, Apr 01      100% ";
-  strftime(date_buffer, sizeof("Thu, Apr 01      100%"), "%a, %b %d      ", tick_time);
+  static char date_buffer[] = "Thu, Apr 01     100% ";
+  strftime(date_buffer, sizeof("Thu, Apr 01     100%"), "%a, %b %d      ", tick_time);
   strcat(date_buffer, battery_buffer);
   text_layer_set_text(s_date_layer, date_buffer);
-  
+  GBitmap *curBitmap;
 
   
   int hour = tick_time->tm_hour;
+//  hour = 6;
   APP_LOG(APP_LOG_LEVEL_INFO, "Updating sky");
   if (hour > 6 && hour < 21){
+    //day
     //range from -80 to 80
     x_shift = hour * 10 - 144;
-    layer_set_frame(bitmap_layer_get_layer(s_background_layer), GRect(x_shift, 0, 144, 58));
-    bitmap_layer_set_bitmap(s_background_layer, s_background_bitmap_sun);
+    curBitmap = s_background_bitmap_sun;
   }
   else{
+    //night
     if (hour < 12) {
-      //early morning
-      x_shift = hour * 16;
-      layer_set_frame(bitmap_layer_get_layer(s_background_layer), GRect(x_shift, 0, 144 - x_shift, 58));
+      //early morning - add 24 to get consistent range e.g. 21-30
+      hour = hour + 24;
     }
-    else{
-      //late evening
-      x_shift = (hour-12) * 6;
-      layer_set_frame(bitmap_layer_get_layer(s_background_layer), GRect(x_shift, 0, 144 - x_shift, 58));
-      
-    }
-    bitmap_layer_set_bitmap(s_background_layer, s_background_bitmap_moon);
+    x_shift = hour * 16 - 400;
+    curBitmap = s_background_bitmap_moon;
   }
+  layer_set_frame(bitmap_layer_get_layer(s_background_layer), GRect(x_shift, 0, 144, 58));
+  bitmap_layer_set_bitmap(s_background_layer, curBitmap);
 }
 
 static void update_time() {
