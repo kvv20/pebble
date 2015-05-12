@@ -1,11 +1,9 @@
 #include <pebble.h>
 
-  
 static Window *s_main_window;
 static TextLayer *s_time_layer;
 static GFont s_time_font;
 static TextLayer *s_date_layer;
-//static GFont s_date_font;
 static BitmapLayer *s_background_layer;
 static GBitmap *s_background_bitmap_sun;
 static GBitmap *s_background_bitmap_moon;
@@ -29,12 +27,12 @@ static void update_sky(){
 
   
   int hour = tick_time->tm_hour;
-//  hour = 6;
+  //hour = 20;
   APP_LOG(APP_LOG_LEVEL_INFO, "Updating sky");
   if (hour > 6 && hour < 21){
     //day
     //range from -80 to 80
-    x_shift = hour * 10 - 144;
+    x_shift = hour * 10.8 - 145;
     curBitmap = s_background_bitmap_sun;
   }
   else{
@@ -43,10 +41,11 @@ static void update_sky(){
       //early morning - add 24 to get consistent range e.g. 21-30
       hour = hour + 24;
     }
-    x_shift = hour * 16 - 400;
+    x_shift = hour * 15.6 - 397;
     curBitmap = s_background_bitmap_moon;
   }
-  y_shift = abs(x_shift) / 4;
+  //x_shift = 70;
+  y_shift = abs(x_shift) / 3;
   
   layer_set_frame(bitmap_layer_get_layer(s_background_layer), GRect(x_shift, y_shift, 144, 58));
   bitmap_layer_set_bitmap(s_background_layer, curBitmap);

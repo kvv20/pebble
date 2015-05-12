@@ -4,7 +4,7 @@
         "configurable"
     ],
     "companyName": "vlad.kazanovsky@gmail.com",
-    "longName": "MyWatchface",
+    "longName": "Kid's drawing",
     "projectType": "native",
     "resources": {
         "media": [
@@ -39,7 +39,7 @@
         ]
     },
     "sdkVersion": "2",
-    "shortName": "MyWatchface",
+    "shortName": "Kid's drawing",
     "uuid": "0bd97a95-d3d1-4052-b1be-e6549572f30a",
     "versionCode": 1,
     "versionLabel": "1.0",
