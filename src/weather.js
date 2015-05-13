@@ -21,7 +21,13 @@ var xhrRequest = function (url, type, callback) {
   xhr.send();
 };
 
+//http://api.sunrise-sunset.org/json?lat=43.7038675&lng=-79.7152268
+//http://www.earthtools.org/timezone/43.7038675/-79.7152268
+//http://www.earthtools.org/sun/43.7038675/-79.7152268/4/12/-5/0 
+//http://www.earthtools.org/sun/<latitude>/<longitude>/<day>/<month>/<timezone>/<dst>
+
 function locationSuccess(pos) {
+  console.log('Lat='+pos.coords.latitude+' ,Long='+pos.coords.longitude);
   // Construct URL
   var url = 'http://api.openweathermap.org/data/2.5/weather?lat=' +
       pos.coords.latitude + '&lon=' + pos.coords.longitude;
