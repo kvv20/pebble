@@ -1,6 +1,10 @@
 {
-    "appKeys": {},
+    "appKeys": {
+        "KEY_CONDITIONS": 1,
+        "KEY_TEMPERATURE": 0
+    },
     "capabilities": [
+        "location",
         "configurable"
     ],
     "companyName": "vlad.kazanovsky@gmail.com",

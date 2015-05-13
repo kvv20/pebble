@@ -1,4 +1,8 @@
 #include <pebble.h>
+  
+#define KEY_TEMPERATURE 0
+#define KEY_CONDITIONS 1
+
 
 static Window *s_main_window;
 static TextLayer *s_time_layer;
@@ -8,8 +12,12 @@ static BitmapLayer *s_background_layer;
 static GBitmap *s_background_bitmap_sun;
 static GBitmap *s_background_bitmap_moon;
 static struct tm *tick_time;
+static char date_buffer[] = "Thu, Apr 01    -10C  100% ";
+static char temperature_buffer[] = "      ";
+
 
 static void update_sky(){
+  GBitmap *curBitmap;
   time_t temp = time(NULL); 
   tick_time = localtime(&temp);
   
@@ -17,13 +25,14 @@ static void update_sky(){
   int y_shift = 0;
   char battery_buffer[16];
   BatteryChargeState charge_state = battery_state_service_peek();
-  snprintf(battery_buffer, sizeof(battery_buffer), "%d%%", charge_state.charge_percent);
+  snprintf(battery_buffer, sizeof(battery_buffer), " %d%%", charge_state.charge_percent);
   // Create a long-lived buffer
-  static char date_buffer[] = "Thu, Apr 01         100% ";
-  strftime(date_buffer, sizeof("Thu, Apr 01         100%"), "%a, %b %d         ", tick_time);
+ 
+  strftime(date_buffer, sizeof("Thu, Apr 01  -10C   100%"), "%a, %b %d  ", tick_time);
+  strcat(date_buffer, temperature_buffer);
   strcat(date_buffer, battery_buffer);
   text_layer_set_text(s_date_layer, date_buffer);
-  GBitmap *curBitmap;
+  
 
   
   int hour = tick_time->tm_hour;
@@ -31,7 +40,7 @@ static void update_sky(){
   APP_LOG(APP_LOG_LEVEL_INFO, "Updating sky");
   if (hour > 6 && hour < 21){
     //day
-    //range from -80 to 80
+    //range from -70 to 70
     x_shift = hour * 10.8 - 145;
     curBitmap = s_background_bitmap_sun;
   }
@@ -51,7 +60,7 @@ static void update_sky(){
   bitmap_layer_set_bitmap(s_background_layer, curBitmap);
 }
 
-static void update_time() {
+static void update_time(bool force_date) {
    APP_LOG(APP_LOG_LEVEL_INFO, "Updating time");
   // Get a tm structure
   time_t temp = time(NULL); 
@@ -73,7 +82,7 @@ static void update_time() {
   text_layer_set_text(s_time_layer, time_buffer);
   
   static int hour = 25; //make sure it will get updated
-  if (hour != tick_time->tm_hour){
+  if (hour != tick_time->tm_hour || force_date){
     hour = tick_time->tm_hour;
     update_sky();
   }
@@ -140,9 +149,48 @@ static void main_window_unload(Window *window) {
 }
 
 static void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
-  update_time();
+  update_time(false);
 }
 
+static void inbox_received_callback(DictionaryIterator *iterator, void *context) {
+  // Read first item
+  Tuple *t = dict_read_first(iterator);
+
+  // For all items
+  while(t != NULL) {
+    // Which key was received?
+     APP_LOG(APP_LOG_LEVEL_INFO, "Key %d processing", (int)t->key);
+    switch(t->key) {
+    case KEY_TEMPERATURE:
+      snprintf(temperature_buffer, sizeof(temperature_buffer), " %dC ", (int)t->value->int32);
+      break;
+    case KEY_CONDITIONS:
+
+      break;
+    default:
+      APP_LOG(APP_LOG_LEVEL_ERROR, "Key %d not recognized!", (int)t->key);
+      break;
+    }
+      //text_layer_set_text(s_date_layer, date_buffer);
+    update_time(true);
+
+    // Look for next item
+    t = dict_read_next(iterator);
+  }
+}
+
+
+static void inbox_dropped_callback(AppMessageResult reason, void *context) {
+  APP_LOG(APP_LOG_LEVEL_ERROR, "Message dropped!");
+}
+
+static void outbox_failed_callback(DictionaryIterator *iterator, AppMessageResult reason, void *context) {
+  APP_LOG(APP_LOG_LEVEL_ERROR, "Outbox send failed!");
+}
+
+static void outbox_sent_callback(DictionaryIterator *iterator, void *context) {
+  APP_LOG(APP_LOG_LEVEL_INFO, "Outbox send success!");
+}
 
 
 static void init() {
@@ -161,8 +209,18 @@ static void init() {
   tick_timer_service_subscribe(MINUTE_UNIT, tick_handler);
   //tick_timer_service_subscribe(HOUR_UNIT, update_sky);
 
+  // Register callbacks
+  app_message_register_inbox_received(inbox_received_callback);
+  app_message_register_inbox_dropped(inbox_dropped_callback);
+  app_message_register_outbox_failed(outbox_failed_callback);
+  app_message_register_outbox_sent(outbox_sent_callback);
+
+  // Open AppMessage
+  app_message_open(app_message_inbox_size_maximum(), app_message_outbox_size_maximum());
+
+  
   // Make sure the time is displayed from the start
-  update_time();
+  update_time(false); 
 }
 
 static void deinit() {
