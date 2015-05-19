@@ -5,13 +5,18 @@
 
 
 static Window *s_main_window;
-static TextLayer *s_time_layer;
-static GFont s_time_font;
+
 static TextLayer *s_date_layer;
 static BitmapLayer *s_background_layer;
+static InverterLayer *inverter_layer;
+static TextLayer *s_time_layer;
+static GFont s_time_font;
+
 static GBitmap *s_background_bitmap_sun;
 static GBitmap *s_background_bitmap_moon;
+
 static struct tm *tick_time;
+
 static char date_buffer[] = "Thu, Apr 01    -10C  100% ";
 static char temperature_buffer[] = "      ";
 
@@ -81,8 +86,11 @@ static void update_time(bool force_date) {
   // Display this time on the TextLayer
   text_layer_set_text(s_time_layer, time_buffer);
   
-  static int hour = 25; //make sure it will get updated
+  static int hour = 25; //make sure it will get updated first time
   if (hour != tick_time->tm_hour || force_date){
+    if (hour != tick_time->tm_hour){
+      app_message_outbox_send();
+    }
     hour = tick_time->tm_hour;
     update_sky();
   }
@@ -130,6 +138,10 @@ static void main_window_load(Window *window) {
 
   // Add it as a child layer to the Window's root layer
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_date_layer));
+  
+  //invert evrything
+  inverter_layer = inverter_layer_create(GRect(0, 0, 144, 168));
+  layer_add_child(window_get_root_layer(window), inverter_layer_get_layer(inverter_layer));
 }
 
 static void main_window_unload(Window *window) {
@@ -171,8 +183,8 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
       APP_LOG(APP_LOG_LEVEL_ERROR, "Key %d not recognized!", (int)t->key);
       break;
     }
-      //text_layer_set_text(s_date_layer, date_buffer);
-    update_time(true);
+//    update_time(true);
+    update_sky();
 
     // Look for next item
     t = dict_read_next(iterator);

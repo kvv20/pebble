@@ -5,13 +5,6 @@ Pebble.addEventListener('ready',
   }
 );
 
-// Listen for when an AppMessage is received
-Pebble.addEventListener('appmessage',
-  function(e) {
-    console.log('AppMessage received!');
-  }                     
-);
-
 var xhrRequest = function (url, type, callback) {
   var xhr = new XMLHttpRequest();
   xhr.onload = function () {
