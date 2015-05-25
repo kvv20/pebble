@@ -23,11 +23,6 @@
                 "type": "png"
             },
             {
-                "file": "images/Watchface_back.png",
-                "name": "IMAGE_BACK",
-                "type": "png"
-            },
-            {
                 "characterRegex": "[0-9.:\\-]",
                 "file": "fonts/youmurdererbb_reg.ttf",
                 "name": "FONT_MURDER_72",
