@@ -17,7 +17,7 @@ static GBitmap *s_background_bitmap_moon;
 
 static struct tm *tick_time;
 
-static char date_buffer[] = "Thu, Apr 01    -10C  100% ";
+static char date_buffer[] = "Thu, Apr 01   -10C  100% ";
 static char temperature_buffer[] = "      ";
 
 
@@ -30,10 +30,10 @@ static void update_sky(){
   int y_shift = 0;
   char battery_buffer[16];
   BatteryChargeState charge_state = battery_state_service_peek();
-  snprintf(battery_buffer, sizeof(battery_buffer), " %d%%", charge_state.charge_percent);
+  snprintf(battery_buffer, sizeof(battery_buffer), "%d%%", charge_state.charge_percent);
   // Create a long-lived buffer
  
-  strftime(date_buffer, sizeof("Thu, Apr 01  -10C   100%"), "%a, %b %d  ", tick_time);
+  strftime(date_buffer, sizeof("Thu, Apr 01 -10C  100%"), "%a,%b %d ", tick_time);
   strcat(date_buffer, temperature_buffer);
   strcat(date_buffer, battery_buffer);
   text_layer_set_text(s_date_layer, date_buffer);
@@ -131,7 +131,7 @@ static void main_window_load(Window *window) {
   text_layer_set_text_color(s_date_layer, GColorBlack);
 
   // Apply to TextLayer for date
-  //text_layer_set_font(s_date_layer, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD));
+  text_layer_set_font(s_date_layer, fonts_get_system_font(FONT_KEY_GOTHIC_18));
   text_layer_set_font(s_time_layer, s_time_font);
 
   text_layer_set_text_alignment(s_date_layer, GTextAlignmentCenter);
