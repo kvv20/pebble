@@ -13,6 +13,11 @@
     "resources": {
         "media": [
             {
+                "file": "fonts/Nohubotiempo.ttf",
+                "name": "FONT_NOHUBO_72",
+                "type": "font"
+            },
+            {
                 "file": "images/moon.png",
                 "name": "MOON",
                 "type": "png"
@@ -23,10 +28,10 @@
                 "type": "png"
             },
             {
-                "characterRegex": "[0-9.:\\-]",
+                "characterRegex": "[0-9.:\\- ]",
                 "file": "fonts/youmurdererbb_reg.ttf",
                 "name": "FONT_MURDER_72",
-                "trackingAdjust": 1,
+                "trackingAdjust": 2,
                 "type": "font"
             },
             {

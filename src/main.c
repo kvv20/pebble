@@ -77,7 +77,7 @@ static void update_time(bool force_date) {
   // Write the current hours and minutes into the buffer
   if(clock_is_24h_style() == true) {
     // Use 24 hour format
-    strftime(time_buffer, sizeof("00:00"), "%H:%M", tick_time);
+    strftime(time_buffer, sizeof("00:00"), "%H %M", tick_time);
   } else {
     // Use 12 hour format
     strftime(time_buffer, sizeof("00:00"), "%I:%M", tick_time);
