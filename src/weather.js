@@ -20,9 +20,10 @@ var xhrRequest = function (url, type, callback) {
 //http://www.earthtools.org/sun/<latitude>/<longitude>/<day>/<month>/<timezone>/<dst>
 
 function locationSuccess(pos) {
+  var API_KEY = '087a4683c6daf14bedd21565711acd7f';
   console.log('Lat='+pos.coords.latitude+' ,Long='+pos.coords.longitude);
   // Construct URL
-  var url = 'http://api.openweathermap.org/data/2.5/weather?lat=' +
+  var url = 'http://api.openweathermap.org/data/2.5/weather?APPID=' + API_KEY + '&lat=' +
       pos.coords.latitude + '&lon=' + pos.coords.longitude;
 
   // Send request to OpenWeatherMap
